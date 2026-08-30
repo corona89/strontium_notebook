@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+
+import '../l10n/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,8 +36,9 @@ class AuthService {
   static const _credKey = 'drive_oauth_credentials';
   static const _emailKey = 'drive_oauth_email';
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
+  late final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: const ['email', DriveConstants.driveScope],
+    serverClientId: _nonEmpty(config.serverClientId),
   );
 
   AuthSession? _session;
@@ -80,16 +84,23 @@ class AuthService {
 
   Future<AuthSession> signIn() async {
     if (isAndroid) {
-      final account = await _googleSignIn.signIn();
-      if (account == null) {
-        throw AuthCancelled();
+      try {
+        final account = await _googleSignIn.signIn();
+        if (account == null) {
+          throw AuthCancelled();
+        }
+        _session = AuthSession(
+          email: account.email,
+          client: _HeaderClient(await account.authHeaders),
+          fromGoogleSignIn: true,
+        );
+        return _session!;
+      } on PlatformException catch (e) {
+        if (isGoogleSignInDeveloperError(e)) {
+          throw AuthDeveloperError();
+        }
+        rethrow;
       }
-      _session = AuthSession(
-        email: account.email,
-        client: _HeaderClient(await account.authHeaders),
-        fromGoogleSignIn: true,
-      );
-      return _session!;
     }
 
     if (!config.hasDesktop) {
@@ -156,6 +167,11 @@ class AuthService {
     };
   }
 
+  static String? _nonEmpty(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return value;
+  }
+
   AccessCredentials _credentialsFromJson(Map<String, dynamic> json) {
     return AccessCredentials(
       AccessToken(
@@ -195,10 +211,27 @@ class AuthCancelled implements Exception {}
 
 class AuthConfigMissing implements Exception {}
 
+class AuthDeveloperError implements Exception {
+  @override
+  String toString() => S.signInDeveloperError;
+}
+
 class AuthException implements Exception {
   AuthException(this.message);
   final String message;
 
   @override
   String toString() => message;
+}
+
+/// `PlatformException(sign_in_failed, … 10 …)` — Google Sign-In DEVELOPER_ERROR.
+bool isGoogleSignInDeveloperError(PlatformException e) {
+  final blob = '${e.code} ${e.message} ${e.details}'.toLowerCase();
+  if (blob.contains('developer_error')) return true;
+  if (e.code == '10') return true;
+  if (e.code == 'sign_in_failed' &&
+      RegExp(r'(^|[^0-9])10([^0-9]|$)').hasMatch(blob)) {
+    return true;
+  }
+  return false;
 }

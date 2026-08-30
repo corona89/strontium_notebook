@@ -66,10 +66,15 @@ flutter pub get
 1. [Google Cloud Console](https://console.cloud.google.com/)에서 프로젝트를 만들고 **Google Drive API**를 사용 설정합니다.
 2. OAuth 동의 화면을 구성합니다. 테스트 사용자로 Drive 폴더 소유 계정(예: `cpar2002@gmail.com`)을 넣습니다.
 3. 사용자 인증 정보 → OAuth 클라이언트 ID:
-   - **Android**: 패키지 `com.strontium.strontium_notebook`. 디버그/릴리스 키스토어 SHA-1을 등록합니다.
-     ```bash
-     keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore
-     ```
+   - **Android**: 패키지 `com.strontium.strontium_notebook`.
+     - **저장소의 미리 빌드된 APK**(`apk/strontium-notebook.apk`)를 설치했다면 Cloud Console에는 **반드시 아래 SHA-1**을 넣으세요. 이 값을 PC에서 `keytool … ~/.android/debug.keystore`로 뽑으면 안 됩니다. 그 지문은 이 APK 서명과 다르고, `DEVELOPER_ERROR`(코드 10)가 납니다.
+       ```
+       D0:C7:38:F8:F3:E2:CC:37:D7:20:0A:62:42:7D:23:C9:2D:02:16:25
+       ```
+     - 직접 `flutter run` / 로컬 빌드할 때만 자기 키스토어 SHA-1을 씁니다.
+       ```bash
+       keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore
+       ```
    - **데스크톱**: 애플리케이션 유형 “데스크톱”. 클라이언트 ID와 시크릿을 받습니다. 루프백(`http://127.0.0.1`) 리다이렉트는 데스크톱 클라이언트에서 허용됩니다.
    - (권장) **웹** 클라이언트: Android `google_sign_in`의 `serverClientId`로 씁니다.
 4. 예시를 복사한 뒤 **실제 값을 넣습니다. 이 파일은 git에 올리지 마세요.**
@@ -131,12 +136,16 @@ flutter build windows --release
 3. 다시 APK를 열어 설치합니다.
 4. 패키지 id는 `com.strontium.strontium_notebook` 입니다.
 
-이 APK는 업로드용 **디버그 키스토어**로 서명했습니다. Play 스토어용이 아닙니다. Google Drive 로그인을 쓰려면 Cloud Console Android OAuth 클라이언트에 아래 SHA-1을 넣으세요.
+이 APK는 업로드용 **디버그 키스토어**로 서명했습니다. Play 스토어용이 아닙니다.
+
+Google Drive 로그인(`DEVELOPER_ERROR` / 코드 10)을 막으려면 Cloud Console **Android** OAuth 클라이언트에 **이 APK의 SHA-1만** 등록하세요. 사용자 PC의 `debug.keystore` 지문은 쓰지 마세요.
 
 ```
 패키지: com.strontium.strontium_notebook
 SHA-1: D0:C7:38:F8:F3:E2:CC:37:D7:20:0A:62:42:7D:23:C9:2D:02:16:25
 ```
+
+웹 클라이언트 ID(`serverClientId`)도 있으면 `google_oauth.json`에 넣고 다시 빌드하면 Sign-In이 더 안정적입니다. 미리 빌드된 APK에는 시크릿을 넣지 않았습니다.
 
 직접 빌드하려면:
 

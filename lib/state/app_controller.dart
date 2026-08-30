@@ -140,6 +140,10 @@ class AppController extends ChangeNotifier {
       error = S.oauthMissing;
       status = null;
       notifyListeners();
+    } on AuthDeveloperError {
+      error = S.signInDeveloperError;
+      status = null;
+      notifyListeners();
     } catch (e) {
       error = e.toString();
       status = null;
