@@ -54,7 +54,7 @@ favorite: false
 
 - Flutter 3.24+ (개발 시 3.44.9 / Dart 3.12 확인)
 - Android: JDK 17+, Android SDK, minSdk **26**
-- Linux 데스크톱: `clang`, `g++`, `cmake`, `ninja-build`, `pkg-config`, `libgtk-3-dev`, `libstdc++-dev`
+- Linux 데스크톱: `clang`, `g++`, `cmake`, `ninja-build`, `pkg-config`, `libgtk-3-dev`, `libstdc++-14-dev`
 - Windows 데스크톱: Visual Studio (Desktop development with C++)
 
 ```bash
