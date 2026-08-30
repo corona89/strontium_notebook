@@ -116,7 +116,29 @@ flutter run -d windows
 flutter build windows --release
 ```
 
-### Android
+### Android — 미리 빌드된 APK 설치 (사이드로드)
+
+저장소에 릴리스 APK를 올려 두었습니다. 직접 빌드하지 않아도 받을 수 있습니다.
+
+- 경로: [`apk/strontium-notebook.apk`](apk/strontium-notebook.apk)
+- 브랜치 다운로드: https://github.com/corona89/strontium_notebook/raw/cursor/strontium-notebook-app-369c/apk/strontium-notebook.apk
+- `main`에 합쳐진 뒤: https://github.com/corona89/strontium_notebook/raw/main/apk/strontium-notebook.apk
+
+**설치 순서 (알 수 없는 출처)**
+
+1. 휴대폰 브라우저나 PC에서 위 APK를 받습니다.
+2. 파일을 열면 Android가 차단할 수 있습니다. **설정 → 보안(또는 앱)** 에서 해당 브라우저/파일 앱의 **알 수 없는 앱 설치** / **출처를 알 수 없는 앱** 을 허용합니다.
+3. 다시 APK를 열어 설치합니다.
+4. 패키지 id는 `com.strontium.strontium_notebook` 입니다.
+
+이 APK는 업로드용 **디버그 키스토어**로 서명했습니다. Play 스토어용이 아닙니다. Google Drive 로그인을 쓰려면 Cloud Console Android OAuth 클라이언트에 아래 SHA-1을 넣으세요.
+
+```
+패키지: com.strontium.strontium_notebook
+SHA-1: D0:C7:38:F8:F3:E2:CC:37:D7:20:0A:62:42:7D:23:C9:2D:02:16:25
+```
+
+직접 빌드하려면:
 
 ```bash
 flutter run -d <device>
@@ -124,7 +146,7 @@ flutter build apk --release
 # build/app/outputs/flutter-apk/app-release.apk
 ```
 
-이 저장소의 CI는 Linux 데스크톱 빌드를 돌립니다. APK는 로컬에 Android SDK가 있을 때 위 명령으로 만듭니다.
+이 저장소의 CI는 Linux 데스크톱 빌드를 돌립니다.
 
 ## 기능 (MVP)
 

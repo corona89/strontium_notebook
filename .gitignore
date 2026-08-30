@@ -57,3 +57,5 @@ key.properties
 .vscode/
 *.apk
 *.aab
+!apk/
+!apk/*.apk
