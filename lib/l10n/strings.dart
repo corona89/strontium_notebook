@@ -15,6 +15,19 @@ class S {
   static const oauthMissing =
       'google_oauth.json이 없습니다. README의 Google Cloud OAuth 안내를 따라 데스크톱 클라이언트 ID/시크릿을 설정하세요.';
 
+  /// 저장소에 올린 APK를 서명한 키스토어의 SHA-1. 사용자 PC의 debug.keystore가 아니다.
+  static const apkSigningSha1 =
+      'D0:C7:38:F8:F3:E2:CC:37:D7:20:0A:62:42:7D:23:C9:2D:02:16:25';
+
+  static const signInDeveloperError =
+      'Google 로그인이 거부되었습니다 (DEVELOPER_ERROR, 코드 10).\n'
+      'Cloud Console에서 Android OAuth 클라이언트를 만들고 '
+      '패키지 이름 `com.strontium.strontium_notebook`과 '
+      '이 APK를 서명한 SHA-1을 등록하세요:\n'
+      '$apkSigningSha1\n'
+      'PC에서 `keytool`로 찍은 로컬 debug.keystore 지문은 쓰지 마세요. '
+      '저장소의 apk/strontium-notebook.apk 와 서명이 다릅니다.';
+
   static const allNotes = '모든 노트';
   static const inbox = '받은 노트';
   static const favorites = '즐겨찾기';
